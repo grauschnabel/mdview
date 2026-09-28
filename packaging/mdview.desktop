@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=mdview
+GenericName=Markdown-Viewer
+Comment=Markdown-Dateien lesen, mit automatischem Neuladen
+Exec=mdview %f
+Icon=mdview
+Terminal=false
+Categories=Utility;Viewer;TextTools;
+MimeType=text/markdown;text/x-markdown;
+StartupNotify=true
