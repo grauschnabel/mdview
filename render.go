@@ -8,7 +8,10 @@ import (
 	"net/url"
 	"path/filepath"
 
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
 )
@@ -87,6 +90,14 @@ hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
 ul, ol { padding-left: 2em; }
 li { margin: 0.25em 0; }
 
+.footnotes {
+	font-size: 0.9em;
+	color: #555;
+}
+
+dt { font-weight: 600; margin-top: 0.75em; }
+dd { margin-left: 2em; }
+
 input[type="checkbox"] {
 	margin-right: 0.5em;
 }
@@ -97,26 +108,70 @@ input[type="checkbox"] {
 const csp = "default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; " +
 	"img-src file: data:; base-uri 'none'; form-action 'none'"
 
-// md is the shared Markdown parser. Raw HTML is passed through on purpose; safety
-// relies on the CSP and on the viewer's navigation policy, not on sanitising.
-var md = goldmark.New(
-	goldmark.WithExtensions(
+// maxHighlightSize is the largest document that is syntax highlighted. Chroma
+// can take seconds on pathological megabyte-sized code blocks, and the first
+// render happens before the window opens, so bigger files are shown unhighlighted.
+const maxHighlightSize = 256 * 1024
+
+// highlightStyle is the Chroma theme. Highlighting uses CSS classes (see
+// highlightCSS) rather than inline styles, which keeps the HTML small and lets
+// code blocks share the page's own background.
+const highlightStyle = "github"
+
+// highlightFormatter is the Chroma HTML formatter shared by the parser and
+// the stylesheet generator so both agree on class names.
+var highlightFormatter = chromahtml.New(chromahtml.WithClasses(true))
+
+// highlightCSS holds the token classes for highlightStyle, generated once.
+var highlightCSS = func() string {
+	var buf bytes.Buffer
+	if err := highlightFormatter.WriteCSS(&buf, styles.Get(highlightStyle)); err != nil {
+		return ""
+	}
+	return buf.String()
+}()
+
+// newParser builds a goldmark instance. Raw HTML is passed through on purpose;
+// safety relies on the CSP and on the viewer's navigation policy, not on
+// sanitising.
+func newParser(highlight bool) goldmark.Markdown {
+	exts := []goldmark.Extender{
 		extension.Table,
 		extension.Strikethrough,
 		extension.Linkify,
 		extension.TaskList,
-	),
-	goldmark.WithRendererOptions(
-		html.WithUnsafe(),
-	),
+		extension.Footnote,
+		extension.DefinitionList,
+	}
+	if highlight {
+		exts = append(exts, highlighting.NewHighlighting(
+			highlighting.WithStyle(highlightStyle),
+			highlighting.WithFormatOptions(chromahtml.WithClasses(true)),
+		))
+	}
+	return goldmark.New(
+		goldmark.WithExtensions(exts...),
+		goldmark.WithRendererOptions(html.WithUnsafe()),
+	)
+}
+
+// md renders normal documents; mdPlain renders very large ones without
+// syntax highlighting.
+var (
+	md      = newParser(true)
+	mdPlain = newParser(false)
 )
 
 // RenderMarkdown converts Markdown bytes to a complete HTML document.
 // The Content-Security-Policy meta tag is emitted first, before any
 // user-controlled content, so the policy is in force while the document is parsed.
 func RenderMarkdown(mdBytes []byte) (string, error) {
+	parser := md
+	if len(mdBytes) > maxHighlightSize {
+		parser = mdPlain
+	}
 	var buf bytes.Buffer
-	if err := md.Convert(mdBytes, &buf); err != nil {
+	if err := parser.Convert(mdBytes, &buf); err != nil {
 		return "", fmt.Errorf("render markdown: %w", err)
 	}
 
@@ -125,12 +180,12 @@ func RenderMarkdown(mdBytes []byte) (string, error) {
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="%s">
-<style>%s</style>
+<style>%s%s</style>
 </head>
 <body>
 %s
 </body>
-</html>`, csp, cssStyle, buf.String())
+</html>`, csp, cssStyle, highlightCSS, buf.String())
 
 	return doc, nil
 }

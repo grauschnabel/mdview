@@ -9,6 +9,9 @@ mdview opens untrusted Markdown files, so it is hardened by default:
   or `data:` images are allowed.
 - Exactly one navigation is allowed per programmatic load. Link clicks, meta
   refresh, redirects and new windows are ignored.
+- Only same-document `#fragment` link clicks are allowed (for footnotes).
+- Syntax highlighting is skipped for documents over 256 KiB to avoid slow
+  regular-expression lexing on hostile input.
 - The context menu is disabled and the network session is ephemeral.
 - JavaScript evaluated through the WebKit API (used only to save and restore the
   scroll position) still runs, in an isolated script world.

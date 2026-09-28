@@ -130,3 +130,83 @@ func TestBaseURI(t *testing.T) {
 		}
 	}
 }
+
+// TestFootnotes checks that the footnote extension is enabled.
+func TestFootnotes(t *testing.T) {
+	doc, err := RenderMarkdown([]byte("Text[^1]\n\n[^1]: Note."))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(doc, `class="footnotes"`) {
+		t.Error("expected footnotes section")
+	}
+}
+
+// TestDefinitionList checks that the definition list extension is enabled.
+func TestDefinitionList(t *testing.T) {
+	doc, err := RenderMarkdown([]byte("Term\n: Definition"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(doc, "<dl>") || !strings.Contains(doc, "<dd>") {
+		t.Error("expected definition list")
+	}
+}
+
+// TestSyntaxHighlighting checks that fenced code is tokenised into classed
+// spans and that the token stylesheet is included.
+func TestSyntaxHighlighting(t *testing.T) {
+	doc, err := RenderMarkdown([]byte("```go\nfunc main() {}\n```"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(doc, `<span class="kd">func</span>`) {
+		t.Errorf("expected tokenised keyword, got:\n%s", doc)
+	}
+	if !strings.Contains(doc, ".chroma") {
+		t.Error("expected Chroma stylesheet")
+	}
+}
+
+// TestLargeDocumentSkipsHighlighting guards against Chroma slowness on huge
+// code blocks.
+func TestLargeDocumentSkipsHighlighting(t *testing.T) {
+	big := "```go\nfunc main() {}\n```\n" + strings.Repeat("x", maxHighlightSize)
+	doc, err := RenderMarkdown([]byte(big))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.Contains(doc, `<span class="kd">`) {
+		t.Error("large documents must not be highlighted")
+	}
+}
+
+// TestHostileCodeFence checks that a malicious info string and code body stay
+// inert text, for known and unknown languages.
+func TestHostileCodeFence(t *testing.T) {
+	for _, src := range []string{
+		"```\"><script>alert(1)</script>\nx\n```",
+		"```nosuchlang\n<script>alert(1)</script>\n```",
+		"```html\n<img src=x onerror=alert(1)>\n```",
+	} {
+		doc, err := RenderMarkdown([]byte(src))
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		body := doc[strings.Index(doc, "<body>"):]
+		if strings.Contains(body, "<script>") || strings.Contains(body, "<img src=x") {
+			t.Errorf("code fence leaked live HTML for %q", src)
+		}
+	}
+}
+
+// TestHostileFootnoteLabel checks that footnote labels never reach ids or hrefs.
+func TestHostileFootnoteLabel(t *testing.T) {
+	doc, err := RenderMarkdown([]byte("A[^javascript:alert(1)]\n\n[^javascript:alert(1)]: note"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.Contains(doc, `href="javascript`) || !strings.Contains(doc, `href="#fn:1"`) {
+		t.Error("footnote label must be replaced by a numeric id")
+	}
+}

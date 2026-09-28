@@ -16,9 +16,10 @@ GTK 4 window using WebKitGTK 6.0.
 - **Live reload** when the file changes, keeping the scroll position
   (works with editors that save atomically)
 - GitHub-flavoured Markdown: tables, task lists, strikethrough, autolinks, raw HTML
+- Footnotes, definition lists and syntax highlighting for fenced code blocks
 - Relative images resolve against the file's directory
 - **Hardened by default:** scripts in the document never run (JavaScript markup
-  is disabled and a strict CSP is set), links cannot be followed, and external
+  is disabled and a strict CSP is set), external links cannot be followed (in-page anchors such as footnotes work), and external
   resources are blocked
 - Quit with `q`, `Ctrl+Q` or `Ctrl+W`
 
@@ -64,16 +65,17 @@ mdview --version
 ```
 
 mdview takes exactly one file. Exit status is 0 on success, 1 on runtime errors
-and 2 on usage errors. Links are shown but cannot be clicked.
+and 2 on usage errors. External links are shown but cannot be followed; in-page anchors, such as
+footnote links, work.
 
 Live reload uses inotify, so it does not work for files on network file systems
 such as NFS or sshfs.
 
 ## Not (yet) supported
 
-Footnotes, definition lists, math, Mermaid and syntax highlighting are not
-enabled. They appear as plain text; see `testdata/test.md` for a showcase of
-what does and does not render.
+Math and Mermaid diagrams are not supported: they need JavaScript, which mdview
+deliberately never runs for documents. They appear as plain text; see
+`testdata/test.md` for a showcase of what does and does not render.
 
 ## Development
 

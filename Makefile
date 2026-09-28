@@ -1,5 +1,5 @@
 # Version shown by `mdview --version` and used for the .deb file name.
-VERSION ?= 0.2.1
+VERSION ?= 0.3.0
 # Install location; the default needs no root privileges.
 PREFIX ?= $(HOME)/.local
 BINDIR  = $(PREFIX)/bin

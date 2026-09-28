@@ -14,6 +14,20 @@ Files: vendor/github.com/yuin/goldmark/*
 Copyright: 2019 Yusuke Inuzuka
 License: Expat
 
+Files: vendor/github.com/yuin/goldmark-highlighting/*
+Copyright: 2019 Yusuke Inuzuka
+License: Expat
+
+Files: vendor/github.com/alecthomas/chroma/*
+Copyright: 2017 Alec Thomas
+Comment: Chroma lexers and styles are derived from Pygments (BSD-2-Clause).
+License: Expat
+
+Files: vendor/github.com/dlclark/regexp2/*
+Copyright: Doug Clark
+ Microsoft Corporation (code ported from dotnet/corefx)
+License: Expat
+
 Files: vendor/github.com/fsnotify/fsnotify/*
 Copyright: 2012 The Go Authors
  fsnotify Authors

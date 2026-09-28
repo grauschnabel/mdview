@@ -6,6 +6,8 @@
  * navigation per programmatic load, no new windows, no context menu and an
  * ephemeral (non-persistent) network session.
  */
+#include <string.h>
+
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
@@ -46,14 +48,38 @@ static void on_load_changed(WebKitWebView *wv, WebKitLoadEvent event, gpointer u
 	}
 }
 
+// is_same_document_anchor reports whether a link click only jumps to a fragment
+// (#...) inside the page that is currently shown, e.g. a footnote link.
+static gboolean is_same_document_anchor(WebKitWebView *wv, WebKitPolicyDecision *decision) {
+	WebKitNavigationAction *action =
+	    webkit_navigation_policy_decision_get_navigation_action(WEBKIT_NAVIGATION_POLICY_DECISION(decision));
+	if (webkit_navigation_action_get_navigation_type(action) != WEBKIT_NAVIGATION_TYPE_LINK_CLICKED) {
+		return FALSE;
+	}
+	const char *target = webkit_uri_request_get_uri(webkit_navigation_action_get_request(action));
+	const char *current = webkit_web_view_get_uri(wv);
+	const char *hash = target ? strchr(target, '#') : NULL;
+	if (!hash || !current) {
+		return FALSE;
+	}
+	size_t prefix = (size_t)(hash - target);
+	const char *current_hash = strchr(current, '#');
+	size_t current_len = current_hash ? (size_t)(current_hash - current) : strlen(current);
+	return prefix == current_len && strncmp(target, current, prefix) == 0;
+}
+
 // decide_policy is the navigation gatekeeper: it allows the navigation caused by
-// load_document and ignores everything else the page tries to do.
+// load_document and in-page anchor links, and ignores everything else the page
+// tries to do (meta refresh, redirects, external links, new windows).
 static gboolean decide_policy(WebKitWebView *wv, WebKitPolicyDecision *decision,
                               WebKitPolicyDecisionType type, gpointer user_data) {
 	switch (type) {
 	case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
 		if (allow_next_load) {
 			allow_next_load = FALSE;
+			return FALSE;
+		}
+		if (is_same_document_anchor(wv, decision)) {
 			return FALSE;
 		}
 		/* fall through */

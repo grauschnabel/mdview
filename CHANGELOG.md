@@ -6,6 +6,16 @@ the project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-28
+
+### Added
+- Footnotes and definition lists.
+- Syntax highlighting for fenced code blocks (server-side via Chroma with CSS
+  classes, so no JavaScript is involved). Documents larger than 256 KiB are
+  shown unhighlighted to keep start-up fast.
+- In-page anchor links (footnotes and their back-links) now work; external
+  links are still blocked.
+
 ## [0.2.1] - 2026-09-28
 
 ### Security
@@ -52,7 +62,8 @@ the project uses [Semantic Versioning](https://semver.org/).
 ### Security
 - Scripts in documents are blocked by CSP; navigation and external resources are disabled.
 
-[Unreleased]: https://github.com/grauschnabel/mdview/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/grauschnabel/mdview/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/grauschnabel/mdview/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/grauschnabel/mdview/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/grauschnabel/mdview/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/grauschnabel/mdview/releases/tag/v0.1.0

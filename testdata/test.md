@@ -169,17 +169,20 @@ window anywhere:
 
 <meta http-equiv="refresh" content="0;url=https://example.com/">
 
-## 9. Extensions that are not enabled
+## 9. Footnotes and definition lists
 
-These are not enabled in `render.go` and therefore appear as plain text:
-
-Footnote[^1] and a second one[^note].
+Footnote[^1] and a second one[^note]. Clicking the footnote number must scroll
+to the note, and the back-arrow must scroll back.
 
 [^1]: Text of the footnote.
 [^note]: Another footnote.
 
 Term
 : Definition (definition list)
+
+## 10. Not supported (needs JavaScript)
+
+These appear as plain text on purpose:
 
 Math: $E = mc^2$ and
 
