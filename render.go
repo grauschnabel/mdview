@@ -1,3 +1,5 @@
+// This file turns Markdown into a self-contained HTML document and computes the
+// base URI used to resolve relative resources such as images.
 package main
 
 import (
@@ -11,6 +13,8 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
+// cssStyle is the built-in stylesheet, inlined into every page. It is inline
+// because the CSP forbids loading external stylesheets.
 const cssStyle = `
 body {
 	max-width: 48em;
@@ -88,39 +92,47 @@ input[type="checkbox"] {
 }
 `
 
-// RenderMarkdown converts Markdown bytes to a complete HTML document.
-// baseDir is used to construct the base URI for resolving relative paths (e.g. images).
-func RenderMarkdown(mdBytes []byte, baseDir string) (string, error) {
-	md := goldmark.New(
-		goldmark.WithExtensions(
-			extension.Table,
-			extension.Strikethrough,
-			extension.Linkify,
-			extension.TaskList,
-		),
-		goldmark.WithRendererOptions(
-			html.WithUnsafe(),
-		),
-	)
+// csp is the page's Content-Security-Policy. Note that base-uri and form-action
+// do not fall back to default-src and must be set explicitly.
+const csp = "default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; " +
+	"img-src file: data:; base-uri 'none'; form-action 'none'"
 
+// md is the shared Markdown parser. Raw HTML is passed through on purpose; safety
+// relies on the CSP and on the viewer's navigation policy, not on sanitising.
+var md = goldmark.New(
+	goldmark.WithExtensions(
+		extension.Table,
+		extension.Strikethrough,
+		extension.Linkify,
+		extension.TaskList,
+	),
+	goldmark.WithRendererOptions(
+		html.WithUnsafe(),
+	),
+)
+
+// RenderMarkdown converts Markdown bytes to a complete HTML document.
+// The Content-Security-Policy meta tag is emitted first, before any
+// user-controlled content, so the policy is in force while the document is parsed.
+func RenderMarkdown(mdBytes []byte) (string, error) {
 	var buf bytes.Buffer
 	if err := md.Convert(mdBytes, &buf); err != nil {
 		return "", fmt.Errorf("render markdown: %w", err)
 	}
 
-	html := fmt.Sprintf(`<!DOCTYPE html>
+	doc := fmt.Sprintf(`<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src file: data:;">
+<meta http-equiv="Content-Security-Policy" content="%s">
 <style>%s</style>
 </head>
 <body>
 %s
 </body>
-</html>`, cssStyle, buf.String())
+</html>`, csp, cssStyle, buf.String())
 
-	return html, nil
+	return doc, nil
 }
 
 // BaseURI constructs a file:// URI from a directory path, properly escaping

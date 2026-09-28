@@ -1,3 +1,4 @@
+/* viewer.h - interface between the Go code (viewer.go) and the GTK window (viewer.c). */
 #ifndef MDVIEW_VIEWER_H
 #define MDVIEW_VIEWER_H
 

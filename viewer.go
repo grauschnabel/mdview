@@ -1,3 +1,7 @@
+// This file is the cgo bridge to the GTK 4 / WebKitGTK window implemented in
+// viewer.c. All GTK calls happen on the thread that runs RunViewer; other
+// goroutines may only call ReloadViewer, which hands work over to the GTK main
+// loop.
 package main
 
 /*

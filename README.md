@@ -17,8 +17,8 @@ GTK 4 window using WebKitGTK 6.0.
   (works with editors that save atomically)
 - GitHub-flavoured Markdown: tables, task lists, strikethrough, autolinks, raw HTML
 - Relative images resolve against the file's directory
-- **Hardened by default:** scripts in the document never run (CSP
-  `default-src 'none'; script-src 'none'`), all navigation and external
+- **Hardened by default:** scripts in the document never run (JavaScript markup
+  is disabled and a strict CSP is set), links cannot be followed, and external
   resources are blocked
 - Quit with `q`, `Ctrl+Q` or `Ctrl+W`
 
@@ -40,6 +40,7 @@ Older systems can use [v0.1.0](https://github.com/grauschnabel/mdview/releases/t
 Build dependencies:
 
 ```sh
+# Go 1.26 or newer is required (see https://go.dev/dl/ if apt has an older one)
 sudo apt install golang build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
 ```
 
@@ -58,7 +59,15 @@ make deb              # builds dist/mdview_<version>_<arch>.deb
 
 ```sh
 mdview README.md
+mdview --help
+mdview --version
 ```
+
+mdview takes exactly one file. Exit status is 0 on success, 1 on runtime errors
+and 2 on usage errors. Links are shown but cannot be clicked.
+
+Live reload uses inotify, so it does not work for files on network file systems
+such as NFS or sshfs.
 
 ## Not (yet) supported
 

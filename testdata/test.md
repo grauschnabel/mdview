@@ -1,87 +1,89 @@
-# mdview Testdokument
+# mdview test document
 
-Dieses Dokument enthält **fast alles**, was Markdown kann. Es dient als Rendering-Test für *mdview*.
+This document contains **almost everything** Markdown can do. It serves as a
+rendering test for *mdview* and as a showcase of what is and is not supported.
 
-## 1. Textformatierung
+## 1. Text formatting
 
-**fett**, *kursiv*, ***fett und kursiv***, ~~durchgestrichen~~, `Inline-Code`, <mark>HTML-mark</mark>, H<sub>2</sub>O, E = mc<sup>2</sup>.
+**bold**, *italic*, ***bold and italic***, ~~strikethrough~~, `inline code`,
+<mark>HTML mark</mark>, H<sub>2</sub>O, E = mc<sup>2</sup>.
 
-Ein Absatz mit hartem Umbruch (zwei Leerzeichen)  
-in der nächsten Zeile. Sonderzeichen: ä ö ü ß € — „Anführungszeichen“ … → ✓ 🚀
+A paragraph with a hard line break (two trailing spaces)  
+on the next line. Special characters: ä ö ü ß € — “quotation marks” … → ✓ 🚀
 
-Escapes: \*kein kursiv\*, \# keine Überschrift, \`kein Code\`.
+Escapes: \*not italic\*, \# not a heading, \`not code\`.
 
-### Überschrift 3
-#### Überschrift 4
-##### Überschrift 5
-###### Überschrift 6
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
 
-Setext-Überschrift
-==================
+Setext heading
+==============
 
-Setext Ebene 2
+Setext level 2
 --------------
 
 ---
 
-## 2. Listen
+## 2. Lists
 
-- Punkt A
-- Punkt B
-  - Verschachtelt B.1
-  - Verschachtelt B.2
-    - Noch tiefer
-- Punkt C
+- Item A
+- Item B
+  - Nested B.1
+  - Nested B.2
+    - Even deeper
+- Item C
 
-1. Erster
-2. Zweiter
-   1. Unter-Punkt
-   2. Unter-Punkt
-3. Dritter
+1. First
+2. Second
+   1. Sub-item
+   2. Sub-item
+3. Third
 
-Gemischt:
+Mixed:
 
-1. Schritt eins
+1. Step one
    - Detail
-   - Noch ein Detail
-2. Schritt zwei
+   - Another detail
+2. Step two
 
-Lose Liste mit Absätzen:
+Loose list with paragraphs:
 
-- Erster Punkt
+- First item
 
-  Zweiter Absatz im selben Punkt.
+  Second paragraph in the same item.
 
-- Zweiter Punkt
+- Second item
 
-### Aufgabenliste
+### Task list
 
-- [x] Markdown parsen
-- [x] HTML rendern
-- [ ] Live-Reload
-- [ ] Dark Mode
+- [x] Parse Markdown
+- [x] Render HTML
+- [x] Live reload
+- [ ] Dark mode
 
-## 3. Links & Bilder
+## 3. Links and images
 
-- [Inline-Link](https://example.com "mit Titel")
-- [Referenz-Link][ref]
-- Auto-Link: https://www.trailto.life
-- <https://example.com/spitze-klammern>
-- E-Mail: <hallo@example.com>
+- [Inline link](https://example.com "with title") (blocked: links cannot be clicked)
+- [Reference link][ref]
+- Autolink: https://www.example.org
+- <https://example.com/angle-brackets>
+- Email: <hello@example.com>
 
-[ref]: https://example.com/referenz
+[ref]: https://example.com/reference
 
-Relatives Bild (aus `testdata/`):
+Relative image (from `testdata/`):
 
-![Relatives SVG](bild.svg)
+![Relative SVG](bild.svg)
 
-Bild als data-URI:
+Image as data URI:
 
-![Roter Punkt](data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18' fill='crimson'/></svg>)
+![Red dot](data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18' fill='crimson'/></svg>)
 
 ## 4. Code
 
-Inline: `fmt.Println("Hallo")`
+Inline: `fmt.Println("Hello")`
 
 ```go
 package main
@@ -90,7 +92,7 @@ import "fmt"
 
 func main() {
 	for i := 0; i < 3; i++ {
-		fmt.Printf("Zeile %d\n", i)
+		fmt.Printf("Line %d\n", i)
 	}
 }
 ```
@@ -104,66 +106,82 @@ def fib(n: int) -> int:
 $ mdview testdata/test.md
 ```
 
-Eingerückter Codeblock:
+Indented code block:
 
-    kein Sprachtag
-    vier Leerzeichen davor
+    no language tag
+    four spaces in front
 
-## 5. Zitate
+## 5. Blockquotes
 
-> Ein einfaches Zitat.
+> A simple quote.
 >
-> Mit zweitem Absatz.
+> With a second paragraph.
 >
-> > Verschachteltes Zitat
-> > über zwei Zeilen.
+> > A nested quote
+> > spanning two lines.
 >
-> - Liste im Zitat
-> - noch ein Punkt
+> - A list in a quote
+> - another item
 >
 > ```
-> Code im Zitat
+> Code in a quote
 > ```
 
-## 6. Tabellen
+## 6. Tables
 
-| Sprache | Typisierung | Kompiliert | Stars |
-|:--------|:-----------:|:----------:|------:|
-| Go      | statisch    | ja         | 120k  |
-| Python  | dynamisch   | nein       | 60k   |
-| Rust    | statisch    | ja         | 95k   |
-| `bash`  | keine       | nein       | —     |
+| Language | Typing  | Compiled | Stars |
+|:---------|:-------:|:--------:|------:|
+| Go       | static  | yes      | 120k  |
+| Python   | dynamic | no       | 60k   |
+| Rust     | static  | yes      | 95k   |
+| `bash`   | none    | no       | —     |
 
-## 7. Rohes HTML
+## 7. Raw HTML
 
 <details>
-<summary>Aufklappbarer Bereich (HTML)</summary>
+<summary>Collapsible section (HTML)</summary>
 
-Versteckter Inhalt mit **Markdown** darin.
+Hidden content with **Markdown** inside.
 
 </details>
 
 <div style="padding:1em;background:#fff3cd;border:1px solid #ffe08a;border-radius:6px">
-Gelbe Box aus reinem HTML.
+Yellow box made of plain HTML.
 </div>
 
-<kbd>Strg</kbd> + <kbd>Q</kbd> beendet mdview.
+<kbd>Ctrl</kbd> + <kbd>Q</kbd> quits mdview.
 
-<!-- Dieser Kommentar ist unsichtbar. -->
+<!-- This comment is invisible. -->
 
-## 8. Nicht aktivierte Erweiterungen
+## 8. Security checks
 
-Diese Dinge sind in `render.go` **nicht** aktiviert und erscheinen daher roh:
+Raw HTML is passed through, so these must all be **neutralised** by the
+viewer. If any of them works, something is wrong:
 
-Fußnote[^1] und eine zweite[^note].
+<script>document.body.style.background = "red";</script>
 
-[^1]: Text der Fußnote.
-[^note]: Noch eine Fußnote.
+<img src="x" onerror="document.body.style.background = 'red'" alt="broken image (expected)">
 
-Begriff
-: Definition (Definition List)
+<a href="javascript:document.body.style.background='red'">javascript: link (must do nothing)</a>
 
-Mathe: $E = mc^2$ und
+The page background must stay white, and the next line must not redirect the
+window anywhere:
+
+<meta http-equiv="refresh" content="0;url=https://example.com/">
+
+## 9. Extensions that are not enabled
+
+These are not enabled in `render.go` and therefore appear as plain text:
+
+Footnote[^1] and a second one[^note].
+
+[^1]: Text of the footnote.
+[^note]: Another footnote.
+
+Term
+: Definition (definition list)
+
+Math: $E = mc^2$ and
 
 $$
 \int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
@@ -174,8 +192,8 @@ graph LR
   A[Markdown] --> B[goldmark] --> C[WebKit]
 ```
 
-Emoji-Shortcode :tada: bleibt Text.
+Emoji shortcode :tada: stays text.
 
 ---
 
-*Ende des Testdokuments.*
+*End of the test document.*
