@@ -1,5 +1,9 @@
 # mdview
 
+[![CI](https://github.com/grauschnabel/mdview/actions/workflows/ci.yml/badge.svg)](https://github.com/grauschnabel/mdview/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/grauschnabel/mdview)](https://github.com/grauschnabel/mdview/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Minimal Markdown viewer for Linux. Double-click a `.md` file, read it, and it
 reloads automatically whenever the file changes.
 

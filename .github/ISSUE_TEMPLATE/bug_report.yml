@@ -1,0 +1,25 @@
+name: Bug report
+description: Something does not render or behave as expected
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: mdview version
+      description: Output of `dpkg -s mdview | grep Version`, or the git commit
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Distribution and desktop
+      placeholder: Ubuntu 24.04, GNOME/Wayland
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include a minimal Markdown file that reproduces the problem.
+    validations:
+      required: true
