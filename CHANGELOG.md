@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-09-28
+
+### Changed
+- Ported to **GTK 4 and WebKitGTK 6.0**. The window layer is now a small C file
+  (`viewer.c`); the gotk3 dependency is gone.
+- Requires Ubuntu 24.04 / Debian 13 or newer. Use 0.1.0 (GTK 3) on older systems.
+
 ## [0.1.0] - 2026-09-28
 
 ### Added

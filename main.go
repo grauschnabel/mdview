@@ -7,9 +7,6 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 )
 
 func main() {
@@ -44,47 +41,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	gtk.Init(nil)
-
-	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "mdview: %v\n", err)
-		os.Exit(1)
-	}
-
-	title := filepath.Base(absPath) + " — mdview"
-	win.SetTitle(title)
-	win.SetDefaultSize(900, 700)
-	win.SetPosition(gtk.WIN_POS_CENTER)
-
-	win.Connect("destroy", func() {
-		gtk.MainQuit()
-	})
-
-	// Key bindings: q (no modifier), Ctrl+Q, Ctrl+W → quit
-	win.Connect("key-press-event", func(_ *gtk.Window, ev *gdk.Event) bool {
-		keyEvent := gdk.EventKeyNewFromEvent(ev)
-		key := keyEvent.KeyVal()
-		state := gdk.ModifierType(keyEvent.State()) & gtk.AcceleratorGetDefaultModMask()
-
-		switch {
-		case key == gdk.KEY_q && state == 0:
-			gtk.MainQuit()
-			return true
-		case key == gdk.KEY_q && state == gdk.CONTROL_MASK:
-			gtk.MainQuit()
-			return true
-		case key == gdk.KEY_w && state == gdk.CONTROL_MASK:
-			gtk.MainQuit()
-			return true
-		}
-		return false
-	})
-
-	webview := NewWebView()
-	webview.AddToWindow(uintptr(win.Native()))
-	webview.LoadHTML(htmlContent, baseURI)
-
 	watchFile(absPath, func() {
 		mdBytes, err := os.ReadFile(absPath)
 		if err != nil {
@@ -94,11 +50,14 @@ func main() {
 		if err != nil {
 			return
 		}
-		glib.IdleAdd(func() { webview.Reload(htmlContent, baseURI) })
+		ReloadViewer(htmlContent, baseURI)
 	})
 
-	win.ShowAll()
-	gtk.Main()
+	title := filepath.Base(absPath) + " — mdview"
+	if err := RunViewer(title, htmlContent, baseURI); err != nil {
+		fmt.Fprintf(os.Stderr, "mdview: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 // watchFile calls onChange (from a background goroutine) whenever absPath changes.

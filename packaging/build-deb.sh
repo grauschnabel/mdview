@@ -3,7 +3,7 @@
 # Usage: packaging/build-deb.sh [version]
 set -eu
 
-VERSION="${1:-0.1.0}"
+VERSION="${1:-0.2.0}"
 ARCH="$(dpkg --print-architecture)"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PKG="$ROOT/dist/mdview_${VERSION}_${ARCH}"
@@ -24,7 +24,7 @@ Version: $VERSION
 Section: utils
 Priority: optional
 Architecture: $ARCH
-Depends: libwebkit2gtk-4.1-0, libgtk-3-0
+Depends: libwebkitgtk-6.0-4, libgtk-4-1
 Maintainer: Martin Kaffanke <martin@kaffanke.info>
 Description: Minimal Markdown viewer with live reload
  Opens a Markdown file in a small GTK window, renders it with goldmark and

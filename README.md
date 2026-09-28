@@ -8,7 +8,7 @@ Minimal Markdown viewer for Linux. Double-click a `.md` file, read it, and it
 reloads automatically whenever the file changes.
 
 Written in Go, rendered with [goldmark](https://github.com/yuin/goldmark) in a
-GTK 3 window using WebKitGTK.
+GTK 4 window using WebKitGTK 6.0.
 
 ## Features
 
@@ -32,14 +32,15 @@ Download the `.deb` from the releases page, then:
 sudo apt install ./mdview_*_amd64.deb
 ```
 
-Requires Ubuntu 24.04 / Debian 13 or newer (`libwebkit2gtk-4.1`).
+Requires GTK 4 and WebKitGTK 6.0 (`libwebkitgtk-6.0-4`): Ubuntu 24.04 / Debian 13 or newer.
+Older systems can use [v0.1.0](https://github.com/grauschnabel/mdview/releases/tag/v0.1.0), which is built on GTK 3.
 
 ### From source
 
 Build dependencies:
 
 ```sh
-sudo apt install golang build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+sudo apt install golang build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
 ```
 
 Then:
@@ -72,7 +73,7 @@ go vet ./... && go test ./...
 ```
 
 The rendering (`render.go`) is platform independent; only the window and
-WebView layer (`main.go`, `webview.go`) is tied to GTK/WebKitGTK.
+WebView layer (`viewer.c`, `viewer.go`) is tied to GTK/WebKitGTK.
 
 ## License
 

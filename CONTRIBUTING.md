@@ -5,7 +5,7 @@ Bug reports and small, focused pull requests are welcome.
 ## Setup
 
 ```sh
-sudo apt install golang build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+sudo apt install golang build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
 make test
 make install   # local install to ~/.local
 ```

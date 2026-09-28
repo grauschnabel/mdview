@@ -1,4 +1,4 @@
-VERSION ?= 0.1.0
+VERSION ?= 0.2.0
 PREFIX ?= $(HOME)/.local
 BINDIR  = $(PREFIX)/bin
 APPDIR  = $(PREFIX)/share/applications
